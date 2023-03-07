@@ -71,3 +71,31 @@ class Grammar:
         #pass the necessary arguments
         automaton = finiteAutomaton(start_states,end_states,self.alphabet,transitions_list)
         return automaton
+   
+     #method for finding teh grammar type and classifying it
+    def classify_grammar(grammar):
+    # verify if it is of type 3
+     if all(len(production) <= 2 and (production[0].islower() or production[0].isupper()) and
+           (len(production) == 1 or production[1].isupper() or production[1] == 'ε') for symbol in grammar for production in grammar[symbol]):
+        return "Type 3 (regular)"
+
+    # verify if it is of type 2
+     if all(len(production) <= 2 and all(s.isupper() for s in production) for symbol in grammar for production in grammar[symbol]):
+        return "Type 2 (context-free)"
+
+    # verify if its of type 1
+     for symbol in grammar:
+        for production in grammar[symbol]:
+            if len(production) < len(symbol) and not any(s.islower() for s in production):
+                return "Type 1 (context-sensitive)"
+
+    # Cverify if its of typ 0
+     for symbol in grammar:
+        for production in grammar[symbol]:
+            if symbol in production:
+                continue
+            if not all(s in grammar for s in production):
+                return "Type 0 (unrestricted)"
+
+    # if the grammar does not fit into any categories,classify it as a not a context-free grammar
+     return "Not context-free"
